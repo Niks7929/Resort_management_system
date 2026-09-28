@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% from "macros.html" import badge, pager %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h2>Staff</h2><a class="btn btn-primary" href="{{ url_for('staff.create') }}">Add staff member</a></div>
+<form class="row g-2 mb-3" method="get"><div class="col-md-6"><input class="form-control" name="q" placeholder="Name or email" value="{{ request.args.q or '' }}"></div>
+<div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div></form>
+<div class="table-responsive bg-white rounded-3 shadow-sm"><table class="table mb-0 align-middle">
+<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead><tbody>
+{% for u in page.items %}<tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ labels.get(u.role, 'Super Admin') }}</td>
+<td>{{ badge('available' if u.active else 'blocked')|replace('Available','Active')|replace('Blocked','Inactive') }}</td>
+<td class="text-end">{% if u.id != current_user.id and u.role != 'super_admin' and (u.role != 'admin' or current_user.role == 'super_admin') %}
+<form method="post" action="{{ url_for('staff.toggle', uid=u.id) }}" class="d-inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button class="btn btn-sm btn-outline-{{ 'danger' if u.active else 'success' }}">{{ 'Deactivate' if u.active else 'Activate' }}</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">No staff found.</td></tr>{% endfor %}
+</tbody></table></div><div class="mt-3">{{ pager(page, 'staff.list_staff') }}</div>
+{% endblock %}

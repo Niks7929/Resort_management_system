@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+<div class="row g-3 mb-4">
+{% for label, value in stats.items() %}
+  <div class="col-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body">
+    <div class="text-muted small">{{ label }}</div>
+    <div class="fs-3 fw-semibold">{{ value }}</div></div></div></div>
+{% endfor %}
+</div>
+<div class="row g-3 mb-4">
+{% for title, rows, verb in [('Arriving today', arrivals, 'in'), ('Leaving today', departures, 'out')] %}
+<div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body"><h3 class="h6">{{ title }}</h3>
+{% for b in rows %}<div class="d-flex justify-content-between border-top py-2"><span>{{ b.guest.name }} · Room {{ b.room.number }}</span>
+<a href="{{ url_for('bookings.view', bid=b.id) }}">Check {{ verb }}</a></div>
+{% else %}<p class="text-muted small mb-0">Nobody {{ 'arriving' if verb == 'in' else 'leaving' }} today.</p>{% endfor %}</div></div></div>{% endfor %}
+</div>
+<h3 class="h5">Recent bookings</h3>
+<div class="table-responsive bg-white rounded-3 shadow-sm"><table class="table mb-0 align-middle">
+<thead><tr><th>ID</th><th>Guest</th><th>Room</th><th>Dates</th><th>Status</th></tr></thead><tbody>
+{% for b in recent %}<tr><td><a href="{{ url_for('bookings.view', bid=b.id) }}">{{ b.code }}</a></td>
+<td>{{ b.guest.name }}</td><td>{{ b.room.number }}</td><td>{{ b.check_in }} → {{ b.check_out }}</td><td>{{ badge(b.status) }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">No bookings yet.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

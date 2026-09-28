@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% from "macros.html" import field %}
+{% block content %}
+<div style="max-width:560px"><h2 class="h4 mb-1">Add staff member</h2>
+<p class="text-muted small">They sign in at the staff page with this email and password. Ask them to change it after their first login.</p>
+<form method="post" novalidate>{{ form.hidden_tag() }}{{ field(form.name) }}{{ field(form.email) }}{{ field(form.phone) }}{{ field(form.role) }}{{ field(form.password) }}{{ field(form.confirm) }}
+<button class="btn btn-primary">Create account</button> <a class="btn btn-link" href="{{ url_for('staff.list_staff') }}">Cancel</a></form></div>
+{% endblock %}

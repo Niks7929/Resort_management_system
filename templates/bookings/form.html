@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% from "macros.html" import field %}
+{% block content %}
+<div style="max-width:640px"><h2 class="h4 mb-3">New booking</h2>
+<form method="post" novalidate>{{ form.hidden_tag() }}
+{% if front_desk %}{{ field(form.guest_id) }}{% endif %}{{ field(form.room_id) }}
+<div class="row"><div class="col-md-6">{{ field(form.check_in) }}</div><div class="col-md-6">{{ field(form.check_out) }}</div>
+<div class="col-md-6">{{ field(form.adults) }}</div><div class="col-md-6">{{ field(form.children) }}</div></div>
+{% if front_desk %}{{ field(form.discount) }}{% endif %}
+<p class="small text-muted">Nights, tax and total are calculated when you confirm.</p>
+<button class="btn btn-primary">Confirm booking</button></form></div>
+{% endblock %}

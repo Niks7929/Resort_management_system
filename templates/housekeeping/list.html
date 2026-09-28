@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}
+{% block content %}
+<h2 class="mb-3">Housekeeping</h2>
+<div class="table-responsive bg-white rounded-3 shadow-sm"><table class="table mb-0 align-middle">
+<thead><tr><th>Room</th><th>Notes</th><th>Status</th><th>Update</th></tr></thead><tbody>
+{% for t in tasks %}<tr><td>{{ t.room.number }}</td><td>{{ t.notes }}</td><td>{{ badge(t.status) }}</td><td>
+<form class="d-flex gap-2" method="post" action="{{ url_for('housekeeping.update', tid=t.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<select class="form-select form-select-sm" name="status">{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if s == t.status }}>{{ s|replace('_',' ')|title }}</option>{% endfor %}</select>
+{% if current_user.role != 'housekeeping' %}<select class="form-select form-select-sm" name="assigned_to"><option value="">Assign to…</option>
+{% for u in staff %}<option value="{{ u.id }}" {{ 'selected' if t.assigned_to == u.id }}>{{ u.name }}</option>{% endfor %}</select>{% endif %}
+<button class="btn btn-sm btn-primary">Save</button></form></td></tr>
+{% else %}<tr><td colspan="4" class="text-center text-muted py-4">No cleaning tasks. They appear automatically at check-out.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

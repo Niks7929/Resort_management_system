@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% from "macros.html" import badge, field %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <h2>Invoice {{ b.code }} {{ badge(b.status) }}</h2>
+  <button class="btn btn-outline-secondary d-print-none" onclick="window.print()"><i class="bi bi-printer"></i> Print invoice</button></div>
+<div class="row g-4"><div class="col-lg-7"><div class="card shadow-sm"><div class="card-body">
+<h5 class="brand">{{ resort_name }}</h5><p class="small text-muted">{{ resort_address }}</p>
+<p><strong>{{ b.guest.name }}</strong><br>{{ b.guest.email }} · {{ b.guest.phone }}</p>
+<p>Room {{ b.room.number }} ({{ b.room.room_type }}) · {{ b.check_in }} → {{ b.check_out }} · {{ b.nights }} night(s) · {{ b.adults }} adult(s), {{ b.children }} child(ren)</p>
+<table class="table table-sm"><tbody>
+<tr><td>Room charges ({{ b.nights }} × {{ b.room_price }})</td><td class="text-end">{{ b.room_price * b.nights }}</td></tr>
+<tr><td>Service charges</td><td class="text-end">{{ b.service_charges }}</td></tr>
+<tr><td>Discount</td><td class="text-end">− {{ b.discount }}</td></tr>
+<tr><td>Tax</td><td class="text-end">{{ b.tax }}</td></tr>
+<tr class="fw-semibold"><td>Total</td><td class="text-end">{{ b.total }}</td></tr>
+<tr><td>Paid</td><td class="text-end">{{ b.paid }}</td></tr>
+<tr class="fw-semibold"><td>Balance</td><td class="text-end">{{ b.balance }}</td></tr></tbody></table>
+{% if b.payments %}<h6>Payments</h6><ul class="small">{% for p in b.payments %}<li>{{ p.paid_at.strftime('%d %b %Y') }} · {{ p.method }} · {{ p.amount }}{% if p.transaction_id %} · {{ p.transaction_id }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+</div></div></div>
+<div class="col-lg-5 d-print-none">
+{% macro act(endpoint, label, cls) %}<form class="d-inline" method="post" action="{{ url_for(endpoint, bid=b.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-{{ cls }} me-1">{{ label }}</button></form>{% endmacro %}
+<div class="mb-3">
+{% if current_user.role in ['super_admin','admin','manager','receptionist'] %}
+  {% if b.status in ['pending','confirmed'] %}{{ act('bookings.check_in','Check in','success') }}{% endif %}
+  {% if b.status == 'checked_in' %}{{ act('bookings.check_out','Check out','dark') }}{% endif %}{% endif %}
+{% if b.status in ['pending','confirmed'] %}{{ act('bookings.cancel','Cancel booking','outline-danger') }}{% endif %}</div>
+{% if current_user.role in ['super_admin','admin','manager','receptionist'] and b.balance > 0 and b.status != 'cancelled' %}
+<div class="card shadow-sm"><div class="card-body"><h6>Record payment</h6>
+<form method="post" action="{{ url_for('bookings.pay', bid=b.id) }}">{{ pay_form.hidden_tag() }}
+{{ field(pay_form.amount) }}{{ field(pay_form.method) }}{{ field(pay_form.transaction_id) }}
+<button class="btn btn-primary">Save payment</button></form></div></div>{% endif %}
+</div></div>
+{% endblock %}

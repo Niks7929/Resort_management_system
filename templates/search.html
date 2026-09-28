@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Rooms free {{ ci.strftime('%d %b') }} to {{ co.strftime('%d %b %Y') }}</h2>
+<p class="text-muted">{{ nights }} night{{ 's' if nights > 1 }} · {{ guests }} guest{{ 's' if guests > 1 }}. <a href="{{ url_for('main.index') }}#search">Change dates</a></p>
+<div class="row g-3">{% for r in rooms %}
+<div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+<h5>{{ r.room_type }} · Room {{ r.number }}</h5><p class="small text-muted">Sleeps {{ r.capacity }} · {{ r.amenity_list|join(', ') }}</p>
+<div class="d-flex justify-content-between align-items-center"><div><strong>{{ r.price * nights }}</strong><div class="small text-muted">{{ r.price }} per night, before tax</div></div>
+<a class="btn btn-primary" href="{{ url_for('bookings.create', room=r.id, check_in=ci, check_out=co, guests=guests) }}">Book</a></div>
+</div></div></div>
+{% else %}<div class="col-12"><div class="alert alert-info">No rooms are free for those dates. Try shifting your stay by a day or two.</div></div>{% endfor %}</div>
+{% endblock %}

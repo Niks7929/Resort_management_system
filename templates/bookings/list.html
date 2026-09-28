@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% from "macros.html" import badge, pager %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h2>Bookings</h2><a class="btn btn-primary" href="{{ url_for('bookings.create') }}">New booking</a></div>
+<form class="row g-2 mb-3" method="get">
+<div class="col-md-6"><input class="form-control" name="q" placeholder="Guest name, phone, room number or BK00001" value="{{ request.args.q or '' }}"></div>
+<div class="col-md-4"><select class="form-select" name="status"><option value="">All statuses</option>
+{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if request.args.status == s }}>{{ s|replace('_',' ')|title }}</option>{% endfor %}</select></div>
+<div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div></form>
+<div class="table-responsive bg-white rounded-3 shadow-sm"><table class="table mb-0 align-middle">
+<thead><tr><th>ID</th><th>Guest</th><th>Room</th><th>Stay</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead><tbody>
+{% for b in page.items %}<tr><td><a href="{{ url_for('bookings.view', bid=b.id) }}">{{ b.code }}</a></td><td>{{ b.guest.name }}</td><td>{{ b.room.number }}</td>
+<td>{{ b.check_in }} → {{ b.check_out }}</td><td>{{ b.total }}</td><td>{{ badge(b.payment_status) }}</td><td>{{ badge(b.status) }}</td></tr>
+{% else %}<tr><td colspan="7" class="text-center text-muted py-4">No bookings found.</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="mt-3">{{ pager(page, 'bookings.list_bookings') }}</div>
+{% endblock %}

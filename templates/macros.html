@@ -1,0 +1,17 @@
+{% macro field(f) %}
+<div class="mb-3">{{ f.label(class="form-label") }}
+  {% if f.type == 'SelectMultipleField' %}{{ f(class="form-select", size=5) }}
+  {% elif f.type in ['SelectField'] %}{{ f(class="form-select" ~ (' is-invalid' if f.errors else '')) }}
+  {% else %}{{ f(class="form-control" ~ (' is-invalid' if f.errors else '')) }}{% endif %}
+  {% for e in f.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+{% endmacro %}
+{% macro badge(s) %}
+<span class="badge rounded-pill text-bg-{{ {'available':'success','confirmed':'success','paid':'success','completed':'success','checked_in':'primary','occupied':'primary','cancelled':'secondary','blocked':'secondary','maintenance':'danger','no_show':'danger','pending':'warning','partial':'warning','cleaning':'info','checked_out':'dark'}.get(s,'light') }}">{{ s|replace('_',' ')|title }}</span>
+{% endmacro %}
+{% macro pager(page, endpoint) %}
+{% if page.pages > 1 %}{% set args = request.args.to_dict() %}{% set _ = args.pop('page', None) %}
+<nav><ul class="pagination pagination-sm">
+{% for p in page.iter_pages() %}{% if p %}<li class="page-item {{ 'active' if p == page.page }}">
+<a class="page-link" href="{{ url_for(endpoint, page=p, **args) }}">{{ p }}</a></li>{% endif %}{% endfor %}
+</ul></nav>{% endif %}
+{% endmacro %}

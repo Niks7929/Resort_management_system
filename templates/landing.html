@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ settings.resort_name }} · Stay by the sea{% endblock %}
+{% block layout %}
+<style>
+.hero{min-height:660px;background:#173d40 url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2200&q=88') center 54%/cover no-repeat;color:#fff;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,34,35,.76),rgba(10,34,35,.28) 62%,rgba(10,34,35,.08)),linear-gradient(0deg,rgba(10,34,35,.3),transparent 46%)}
+.hero>*{position:relative;z-index:1}
+.hero svg{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:86px;z-index:2}
+.hero h1{font-size:clamp(2.7rem,6vw,5.3rem);line-height:1.02;max-width:11ch;text-wrap:balance}
+.hero .lead{max-width:38rem;color:rgba(255,255,255,.87)}
+.lnav{min-height:82px;border-bottom:1px solid rgba(255,255,255,.24)}
+.lnav .brand{color:#fff;text-decoration:none}
+.lnav nav a{color:#fff;text-decoration:none;opacity:.9;transition:opacity .2s ease}
+.lnav nav a:hover{opacity:1}
+.hero-copy{padding:6.8rem 0 10rem}
+.eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.finder{margin-top:-72px;position:relative;z-index:3}
+.finder form{border-radius:8px!important;padding:1.7rem!important;border:1px solid rgba(22,48,47,.08)}
+.finder .form-label{font-size:.76rem;font-weight:600;color:#425452;margin-bottom:.45rem}
+.finder .form-control,.finder .form-select{min-height:50px;border-color:#dce4e1}
+.finder .btn{min-height:50px}
+.tile{position:relative;border-radius:8px;min-height:210px;display:flex;align-items:flex-end;padding:1.25rem;color:#fff;font-family:'Fraunces',serif;font-size:1.35rem;background-color:#396b68;background-position:center;background-size:cover;overflow:hidden}
+.tile:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(12,32,32,.62),transparent 65%)}
+.tile>*{position:relative}
+.photo-terrace{background-image:url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1200&q=82')}
+.photo-dining{background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=82')}
+.sec{padding:5.2rem 0}.sec-alt{background:#eaf1ed}
+.section-kicker{color:#a66a20;font-size:.74rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
+.ico{flex:0 0 46px;width:46px;height:46px;border-radius:8px;background:#fff;display:grid;place-items:center;color:var(--lagoon);font-size:1.25rem;border:1px solid #e3e9e6}
+.room-photo{height:220px;border-radius:0;font-size:1.2rem}
+.room-photo:before{background:linear-gradient(0deg,rgba(12,32,32,.52),transparent 66%)}
+.room-card{border-radius:8px!important;transition:transform .22s ease,box-shadow .22s ease}
+.room-card:hover{transform:translateY(-4px);box-shadow:0 1rem 2rem rgba(20,48,44,.13)!important}
+.room-card .card-body{padding:1.25rem}
+.quote-mark{font-family:'Fraunces',serif;font-size:2.5rem;line-height:1;color:#b77d37}
+.contact-panel{background:#173d40;color:#fff;border-radius:8px;padding:2rem}
+.contact-panel .text-muted{color:rgba(255,255,255,.7)!important}
+@media(max-width:767.98px){.hero{min-height:610px;background-position:58% center}.hero-copy{padding:5.2rem 0 8.5rem}.hero h1{max-width:10ch}.finder{margin-top:-54px}.finder form{padding:1.2rem!important}.sec{padding:3.7rem 0}.tile{min-height:170px}}
+@media(prefers-reduced-motion:reduce){.room-card{transition:none}}
+</style>
+<header class="hero" style="background-image:url('{{ settings.hero_image_url }}')">
+  <div class="container d-flex justify-content-between align-items-center lnav">
+    <a class="brand fs-4 text-decoration-none" href="{{ url_for('main.index') }}">{{ resort_name }}</a>
+    <nav class="d-none d-md-flex gap-4 align-items-center">
+      <a href="#rooms">Rooms</a><a href="#amenities">Amenities</a><a href="#dining">Dining</a><a href="#offers">Offers</a><a href="#contact">Contact</a>
+      {% if current_user.is_authenticated %}<a class="btn btn-light btn-sm" href="{{ url_for('main.dashboard') }}">My account</a>
+      {% else %}<a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.login') }}">Login</a>{% endif %}
+    </nav>
+    <a class="btn btn-light btn-sm d-md-none" href="#search">Book a stay</a>
+  </div>
+  <div class="container hero-copy">
+    <p class="eyebrow mb-3">{{ settings.hero_kicker }}</p>
+    <h1 class="brand">{{ settings.hero_title }}</h1>
+    <p class="lead mt-4">{{ settings.hero_description }}</p>
+    <a href="#search" class="btn btn-light btn-lg me-2 mt-2">Find your stay <i class="bi bi-arrow-right ms-2"></i></a>
+    <a href="#rooms" class="btn btn-outline-light btn-lg mt-2">Explore the resort</a>
+  </div>
+  <svg viewBox="0 0 1440 110" preserveAspectRatio="none"><path fill="#F5F7F6" d="M0 70c120-40 240-40 360 0s240 40 360 0 240-40 360 0 240 40 360 0v40H0z"/></svg>
+</header>
+
+<section class="container finder" id="search"><form action="{{ url_for('main.search') }}" method="get" class="bg-white rounded-4 shadow p-4 row g-3 align-items-end">
+  <div class="col-md-3"><label class="form-label">Check-in</label><input type="date" name="check_in" class="form-control" min="{{ today }}" required></div>
+  <div class="col-md-3"><label class="form-label">Check-out</label><input type="date" name="check_out" class="form-control" min="{{ today }}" required></div>
+  <div class="col-md-3"><label class="form-label">Guests</label><select name="guests" class="form-select">{% for n in range(1,9) %}<option>{{ n }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><button class="btn btn-primary btn-lg w-100">Check availability</button></div>
+</form></section>
+
+{% with msgs = get_flashed_messages(with_categories=true) %}{% if msgs %}<div class="container mt-3">{% for c, m in msgs %}<div class="alert alert-{{ c }}">{{ m }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+
+<section class="sec"><div class="container row mx-auto align-items-center g-5">
+  <div class="col-lg-6"><p class="section-kicker mb-2">Made for unwinding</p><h2 class="display-6 brand">{{ settings.intro_title }}</h2>
+    <p class="mt-3">{{ settings.intro_description }}</p>
+    <p>Whether you come for a weekend or a month, check-in is quick, rooms are cleaned the same day you leave them, and the front desk is staffed around the clock.</p></div>
+  <div class="col-lg-6"><div class="tile photo-terrace" style="min-height:330px;background-image:linear-gradient(0deg,rgba(12,32,32,.62),transparent 65%),url('{{ settings.intro_image_url }}')">Sea-facing terrace, at first light</div></div>
+</div></section>
+
+<section class="sec sec-alt" id="rooms"><div class="container">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4"><div><p class="section-kicker mb-2">Find your place</p><h2 class="display-6 brand mb-0">Rooms and villas</h2></div><a href="{{ url_for('main.search') }}?check_in={{ today }}&check_out={{ (today.fromordinal(today.toordinal()+1)) }}&guests=1">See what's free tonight <i class="bi bi-arrow-up-right ms-1"></i></a></div>
+  <div class="row g-4">
+  {% set room_photos = ['photo-1611892440504-42a792e24d32','photo-1618221195710-dd6b41faaea6','photo-1590490360182-c33d57733427'] %}
+  {% for r in rooms %}<div class="col-md-6 col-lg-4"><div class="card room-card border-0 shadow-sm h-100 overflow-hidden">
+    <div class="tile room-photo" style="background-image:linear-gradient(0deg,rgba(12,32,32,.52),transparent 66%),url('https://images.unsplash.com/{{ room_photos[loop.index0 % 3] }}?auto=format&fit=crop&w=1000&q=82')">{{ r.room_type }}</div>
+    <div class="card-body"><div class="d-flex justify-content-between"><strong>Room {{ r.number }}</strong><span>{{ r.price }} <small class="text-muted">/ night</small></span></div>
+    <p class="small text-muted mb-3">Sleeps {{ r.capacity }} · {{ r.amenity_list[:4]|join(', ') }}</p>
+    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('bookings.create', room=r.id) }}">Book this room</a></div></div></div>
+  {% else %}<p class="text-muted">Rooms will appear here once the resort adds them.</p>{% endfor %}
+  </div></div></section>
+
+<section class="sec" id="amenities"><div class="container"><h2 class="display-6 brand mb-4">Everything is on site</h2><div class="row g-4">
+{% for icon, t, d in [('bi-wifi','Fast WiFi','Fibre across rooms, pool deck and restaurant.'),('bi-water','Swimming pool','Open 6 am to 9 pm, with a shaded children\'s end.'),('bi-cup-hot','Breakfast included','Served on the terrace, 7 to 10:30.'),('bi-car-front','Free parking','Covered spaces close to reception.'),('bi-snow2','Air conditioning','Quiet units in every room and cottage.'),('bi-bell','Room service','Until midnight, straight from the kitchen.')] %}
+<div class="col-md-4 d-flex gap-3"><div class="ico shadow-sm bg-white"><i class="bi {{ icon }}"></i></div><div><strong>{{ t }}</strong><div class="small text-muted">{{ d }}</div></div></div>{% endfor %}
+</div></div></section>
+
+<section class="sec sec-alt"><div class="container"><h2 class="display-6 brand mb-4">Things to do</h2><div class="row g-4">
+{% for icon, t, d in [('bi-flower1','Spa','Massage and treatment rooms, by appointment.'),('bi-bicycle','Gym and activities','Kayaks, cycling and guided coastal walks.'),('bi-airplane','Airport pickup','Book with your stay; we track your flight.'),('bi-building','Conference hall','Seats 80, with AV and catering.')] %}
+<div class="col-md-6 col-lg-3"><div class="bg-white rounded-4 p-4 h-100 shadow-sm"><i class="bi {{ icon }} fs-3" style="color:var(--lagoon)"></i><h3 class="h6 mt-3">{{ t }}</h3><p class="small text-muted mb-0">{{ d }}</p></div></div>{% endfor %}
+</div></div></section>
+
+<section class="sec" id="dining"><div class="container row mx-auto g-5 align-items-center">
+  <div class="col-lg-6 order-lg-2"><p class="section-kicker mb-2">A taste of the coast</p><h2 class="display-6 brand">{{ settings.dining_title }}</h2><p class="mt-3">{{ settings.dining_description }}</p>
+    <p class="small text-muted">Breakfast 7:00 – 10:30 · Lunch 12:30 – 15:00 · Dinner 19:00 – 22:30</p></div>
+  <div class="col-lg-6 order-lg-1"><div class="tile photo-dining" style="min-height:300px;background-image:linear-gradient(0deg,rgba(12,32,32,.62),transparent 65%),url('{{ settings.dining_image_url }}')">Dinner on the deck</div></div>
+</div></section>
+
+<section class="sec sec-alt" id="offers"><div class="container"><h2 class="display-6 brand mb-4">Current offers</h2><div class="row g-4">
+{% for t, d in [('Weekend escape','Stay Friday and Saturday, get breakfast for two and late check-out.'),('Couples package','Sea-facing room, a candlelit dinner and a spa session.'),('Family stay','Kids under 12 stay free, with a family room and pool games.')] %}
+<div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100 border-start border-4" style="border-color:var(--amber)!important"><h3 class="h5">{{ t }}</h3><p class="small text-muted mb-0">{{ d }}</p></div></div>{% endfor %}
+</div></div></section>
+
+<section class="sec"><div class="container"><h2 class="display-6 brand mb-4">What guests say</h2><div class="row g-4">
+{% for q, n in [('We arrived at noon and the room was ready. That never happens.','Sample review · Meera K.'),('The villa pool at sunrise was worth the trip alone.','Sample review · Daniel R.'),('Kids, grandparents and a surprise birthday, and the team handled all of it.','Sample review · The Shah family')] %}
+<div class="col-md-4"><figure class="bg-white rounded-3 p-4 h-100 shadow-sm mb-0"><div class="quote-mark">“</div><blockquote class="mb-3">{{ q }}</blockquote><figcaption class="small text-muted">{{ n }}</figcaption></figure></div>{% endfor %}
+</div></div></section>
+
+<section class="sec sec-alt"><div class="container"><h2 class="display-6 brand mb-4">Around the property</h2><div class="row g-3">
+{% for t, image in [('Pool deck','photo-1571896349842-33c89424de2d'),('Beach path','photo-1518837695005-2083093ee35b'),('Garden cottages','photo-1449158743715-0a90ebb6d2d8'),('Spa courtyard','photo-1540555700478-4be289fbecef')] %}
+<div class="col-6 col-lg-3"><div class="tile" style="background-image:linear-gradient(0deg,rgba(12,32,32,.58),transparent 70%),url('https://images.unsplash.com/{{ image }}?auto=format&fit=crop&w=800&q=80')">{{ t }}</div></div>{% endfor %}
+</div></div></section>
+
+<section class="sec" id="contact"><div class="container row mx-auto g-5 align-items-center">
+  <div class="col-lg-5"><h2 class="display-6 brand">{{ settings.contact_title }}</h2><p class="text-muted mt-3">{{ settings.contact_description }}</p></div>
+  <div class="col-lg-7"><div class="contact-panel"><ul class="list-unstyled fs-5 mb-0">
+    <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>{{ settings.resort_address }}</li>
+    <li class="mb-2"><i class="bi bi-telephone me-2"></i>{{ settings.phone }}</li>
+    <li class="mb-2"><i class="bi bi-envelope me-2"></i>{{ settings.email }}</li>
+    <li><i class="bi bi-clock me-2"></i>Front desk open 24 hours</li></ul></div></div>
+</div></section>
+
+<footer class="py-4 text-white" style="background:#16302F"><div class="container d-flex flex-wrap justify-content-between gap-3">
+  <span class="brand">{{ resort_name }}</span>
+  <span class="small opacity-75">© {{ today.year }} {{ resort_name }}</span>
+  <span class="small"><a class="text-white opacity-75 me-3" href="{{ url_for('auth.login') }}">Guest login</a><a class="text-white opacity-75" href="{{ url_for('auth.staff_login') }}">Staff login</a></span>
+</div></footer>
+{% endblock %}

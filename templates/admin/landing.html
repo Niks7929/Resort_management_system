@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Edit landing page · {{ resort_name }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div><p class="text-uppercase small fw-semibold text-muted mb-1">Site management</p><h1 class="h2 mb-0">Landing page content</h1></div>
+  <a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}" target="_blank" rel="noopener">Preview site <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+</div>
+<form method="post" class="bg-white border rounded-3 p-4">
+  {{ form.hidden_tag() }}
+  {% macro field(control, wide=false) %}
+  <div class="{{ 'col-12' if wide else 'col-md-6' }} mb-3">
+    {{ control.label(class="form-label fw-semibold") }}
+    {% if control.type == 'TextAreaField' %}{{ control(class="form-control", rows=3) }}{% else %}{{ control(class="form-control") }}{% endif %}
+    {% for error in control.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+  </div>
+  {% endmacro %}
+  <section class="mb-4">
+    <h2 class="h5 border-bottom pb-2 mb-3">Resort details</h2>
+    <div class="row">{{ field(form.resort_name) }}{{ field(form.resort_address) }}</div>
+  </section>
+  <section class="mb-4">
+    <h2 class="h5 border-bottom pb-2 mb-3">Hero</h2>
+    <div class="row">{{ field(form.hero_kicker) }}{{ field(form.hero_title) }}{{ field(form.hero_description, true) }}{{ field(form.hero_image_url, true) }}</div>
+  </section>
+  <section class="mb-4">
+    <h2 class="h5 border-bottom pb-2 mb-3">About the resort</h2>
+    <div class="row">{{ field(form.intro_title) }}{{ field(form.intro_image_url) }}{{ field(form.intro_description, true) }}</div>
+  </section>
+  <section class="mb-4">
+    <h2 class="h5 border-bottom pb-2 mb-3">Dining</h2>
+    <div class="row">{{ field(form.dining_title) }}{{ field(form.dining_image_url) }}{{ field(form.dining_description, true) }}</div>
+  </section>
+  <section class="mb-4">
+    <h2 class="h5 border-bottom pb-2 mb-3">Contact</h2>
+    <div class="row">{{ field(form.contact_title) }}{{ field(form.contact_description, true) }}{{ field(form.phone) }}{{ field(form.email) }}</div>
+  </section>
+  <div class="d-flex justify-content-end gap-2"><a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a><button class="btn btn-primary"><i class="bi bi-check2 me-1"></i>Save changes</button></div>
+</form>
+{% endblock %}

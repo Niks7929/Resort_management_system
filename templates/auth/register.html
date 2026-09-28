@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% from "macros.html" import field %}
+{% block content %}
+<div class="mx-auto" style="max-width:480px"><div class="card shadow-sm"><div class="card-body p-4">
+<h2 class="h4 mb-3">Create your guest account</h2>
+<form method="post" novalidate>{{ form.hidden_tag() }}
+{{ field(form.name) }}{{ field(form.email) }}{{ field(form.phone) }}{{ field(form.password) }}{{ field(form.confirm) }}
+<button class="btn btn-primary w-100">Create account</button></form>
+<div class="small mt-3 text-center">
+	<div>Already have a guest account? <a href="{{ url_for('auth.login') }}">Guest sign in</a></div>
+	<div class="mt-1">Resort employee? <a href="{{ url_for('auth.staff_login') }}">Staff sign in</a></div>
+</div>
+</div></div></div>
+{% endblock %}

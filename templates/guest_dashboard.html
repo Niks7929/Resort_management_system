@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h2>Your stays</h2>
+<a class="btn btn-primary" href="{{ url_for('bookings.create') }}">New booking</a></div>
+<div class="row g-3">{% for b in bookings %}
+<div class="col-md-4"><div class="card shadow-sm"><div class="card-body">
+<div class="d-flex justify-content-between"><strong>{{ b.code }}</strong>{{ badge(b.status) }}</div>
+<p class="mb-1">Room {{ b.room.number }} · {{ b.room.room_type }}</p>
+<p class="small text-muted">{{ b.check_in }} → {{ b.check_out }}</p>
+<a href="{{ url_for('bookings.view', bid=b.id) }}">Details and invoice</a></div></div></div>
+{% else %}<p class="text-muted">You have no bookings yet. Pick a room to get started.</p>{% endfor %}</div>
+{% endblock %}
